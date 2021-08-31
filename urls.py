@@ -1,0 +1,1 @@
+_URL_API = 'https://jsonplaceholder.typicode.com/posts'
