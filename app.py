@@ -15,9 +15,9 @@ werkzeug.security, passlib o cryptography
 
 '''
 import requests
-import crypt
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, session, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 from urls import _URL_API
 from config import _SECRET_KEY, _SALT
 
@@ -41,6 +41,12 @@ class User(db.Model):
         self.password = password
         self.is_active = is_active
         self.confirmed_at = confirmed_at
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return  
 
 def get_data(url: str, *arg):
     '''Obtiene la data desde la API
@@ -73,8 +79,9 @@ def register_post():
     if not request.form['Username'] or not request.form['Password']:
         flash('Please enter all the fields', 'error')
     else:
+        password_hash = generate_password_hash(request.form['Password'])
         #password = crypt.crypt(request.form['Password'], _SALT) # encriptado de clave
-        user = User(None, request.form['Username'], request.form['Password'], None, None)
+        user = User(None, request.form['Username'], password_hash, None, None)
         print(user)
         db.session.add(user)
         db.session.commit()
@@ -92,13 +99,14 @@ def login():
 @app.post('/login')
 def loginPost():
     try:
-        session.pop('user_id', None) #Elimina las cookies en caso de existir
+        session.pop('username', None) #Elimina las cookies en caso de existir
         usernameForm = request.form['Username']
         password = request.form['Password']
         
         userDb = get_user(usernameForm) # Se obtiene el usuario de la DB
         
-        if userDb.email and password == userDb.password: # Valida usuario y contraseña
+        #if userDb.email and password == userDb.password: # Valida usuario y contraseña
+        if userDb.email and check_password_hash(userDb.password, password):
             session['username'] = userDb.email    # Crea la sesion (cookie)         
             return redirect(url_for('members_only'))
         else:
