@@ -1,7 +1,7 @@
 # Flask_api_webPosts_Faraday
 Desarrolada con framework Flask, manejo de sesiones
 
-##Ejercicio
+## Ejercicio
 Desarrollar una aplicación WEB, que cumpla con lo siguiente:
 1. Que permita registrar y iniciar sesión a "Usuarios".
 2. Que contenga una ruta (/members_only), solo accesible por usuarios validos.
@@ -11,6 +11,3 @@ API para extraer la información: https://jsonplaceholder.typicode.com/posts
 
 __author__ = 'eddie75espinoza'
 __date__ = '29/08/2021'
-
-###A considerar: se debe encriptar el password que se envía a la DB, puede usarse:
-werkzeug.security, passlib o cryptography
